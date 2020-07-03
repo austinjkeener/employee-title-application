@@ -11,7 +11,7 @@ link:
 
 ## Screenshot
 <i>This is the screenshot of the application<i>
-![screenshot](./screen-shot.png)
+![screenshot](/screen-shot.png)
 
 
 <hr>
