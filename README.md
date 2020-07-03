@@ -11,7 +11,7 @@ link:
 
 ## Screenshot
 
-![screenshot](/screen-shot.png)
+![screenshot](./screen-shot.png)
 
 
 <hr>
