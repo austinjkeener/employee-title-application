@@ -56,23 +56,24 @@ if(answers.role === "engineer"){
     question = "officer number";
 }
 // this is what calls the user to answer who they are filling out the information for, and then depending on their reponse, they see a more specific questions pertiaining to a certain position.
-const engineer;
-const intern;
-const manager;
+// const engineer;
+// const intern;
+// const manager;
 inquirer.prompt([
     {
         type: "input",
         message: question,
         name: "specQuestion"
     }
-    // this is where they ask the user if the main
+    // this is where the response to 'question' is answered. In theory it is to print the information from the user to a blank array which will then be translated over to an html document where it can be viewed on the front of a web page
 ]).then (function(response){
-    const {name,id,email,github}=response; 
-    engineer = new Engineer(name, id, email,github);
-    const {name,id,email,school}=response;
-    intern = new Intern(name, id, email,school);
-    const {name,id,email,officeNumber}=response;
-    manager = new Manager(name, id, email,officeNumber);
+    console.log(response);
+    // const {name,id,email,github}=response; 
+    // engineer = new Engineer(name, id, email,github);
+    // const {name,id,email,school}=response;
+    // intern = new Intern(name, id, email,school);
+    // const {name,id,email,officeNumber}=response;
+    // manager = new Manager(name, id, email,officeNumber);
 inquirer.prompt([
         {
             type: "confirm",
@@ -80,12 +81,13 @@ inquirer.prompt([
             name: "keepGoing"
         }
     ]).then (function(response){
+        //returns the user back to the beginning of the questions
         if(response.keepGoing === true){
             rosterOutput();
         } else {
+            //this is what happens when the user selects 'no'. the information is translated to 'employees' variable and then input into team.html
             fs.writeFileSync(outputPath, render(employees), "utf8");
         }
-        console.log(employees);
     })
 })
 }
