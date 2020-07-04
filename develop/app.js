@@ -5,10 +5,11 @@ const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
+const employees = [];
 
 // i do not know what to use the below two lines for so i am commending them out for now.
-// const OUTPUT_DIR = path.resolve(__dirname, "output");
-// const outputPath = path.join(OUTPUT_DIR, "team.html");
+const OUTPUT_DIR = path.resolve(__dirname, "output");
+const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 // this is how information is translated to the html renderer so that it can print onto the webpage
 const render = require("./lib/htmlRenderer");
@@ -54,19 +55,41 @@ if(answers.role === "engineer"){
 } else if (answers.role === "manager"){
     question = "officer number";
 }
-
+// this is what calls the user to answer who they are filling out the information for, and then depending on their reponse, they see a more specific questions pertiaining to a certain position.
+const engineer;
+const intern;
+const manager;
 inquirer.prompt([
     {
         type: "input",
         message: question,
         name: "specQuestion"
     }
+    // this is where they ask the user if the main
 ]).then (function(response){
-    console.log(response);
+    const {name,id,email,github}=response; 
+    engineer = new Engineer(name, id, email,github);
+    const {name,id,email,school}=response;
+    intern = new Intern(name, id, email,school);
+    const {name,id,email,officeNumber}=response;
+    manager = new Manager(name, id, email,officeNumber);
+inquirer.prompt([
+        {
+            type: "confirm",
+            message: "Do you want to continue?",
+            name: "keepGoing"
+        }
+    ]).then (function(response){
+        if(response.keepGoing === true){
+            rosterOutput();
+        } else {
+            fs.writeFileSync(outputPath, render(employees), "utf8");
+        }
+        console.log(employees);
+    })
 })
-
 }
-
+rosterOutput();
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
@@ -88,4 +111,3 @@ inquirer.prompt([
 // for further information. Be sure to test out each class and verify it generates an
 // object with the correct structure and methods. This structure will be crucial in order
 // for the provided `render` function to work! ```
-rosterOutput();
