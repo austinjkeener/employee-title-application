@@ -11,7 +11,7 @@ link: https://austingraphicandweb.github.io/employee-title-application/
 
 ## Screenshot
 
-![screenshot](/develop/screen-shot.png)
+![screenshot](./screenshot.png)
 
 
 <hr>
