@@ -1,115 +1,151 @@
-//required documents that need to be linked to app.js
-const Manager = require("./lib/Manager");
-const Engineer = require("./lib/Engineer");
-const Intern = require("./lib/Intern");
-const inquirer = require("inquirer");
-const path = require("path");
-const fs = require("fs");
-const employees = [];
+/**
+ * Re-doing the app page
+ */
 
-// i do not know what to use the below two lines for so i am commending them out for now.
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
-
-// this is how information is translated to the html renderer so that it can print onto the webpage
-const render = require("./lib/htmlRenderer");
-
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-
-// this is where npm inquirer is used. the whole point of rosterOutput is to print information within the cli for the user to fill out so that it can be translated via file system onto a web page for others to view.
-function rosterOutput(){
-    inquirer.prompt([
-        // each one of these is a different set of keypairs used to gather the information that the user puts in
-        {
-            type: "input",
-            message: "type in your name",
-            name: "name"
-        },
-        {
-            type: "list",
-            message: "what is your role?",
-            choices: ["manager", "intern", "engineer"],
-            name: "role"
-        },
-        {
-            type: "input",
-            message: "enter in your id",
-            name:"id"
-        }
-        // this is the promise to the inquirer function. within this function a link is made to transfer the information gathered into the next part of the code so that all data can be printed to the webpage.
-    ]).then(function(answers){
-        roleQuestion(answers);
-        
-    })
-}
-//this function is used to determine which 'card' the information will be sent to. if the user picks engineer as a role, for example, then the card that is generated will be one for an engineer.
-function roleQuestion(answers){
-let question;
-console.log(answers.role);
-if(answers.role === "engineer"){
-    question = "link to github profile";
-}else if (answers.role === "intern"){
-    question = "school?";
-} else if (answers.role === "manager"){
-    question = "officer number";
-}
-// this is what calls the user to answer who they are filling out the information for, and then depending on their reponse, they see a more specific questions pertiaining to a certain position.
-// const engineer;
-// const intern;
-// const manager;
-inquirer.prompt([
-    {
-        type: "input",
-        message: question,
-        name: "specQuestion"
-    }
-    // this is where the response to 'question' is answered. In theory it is to print the information from the user to a blank array which will then be translated over to an html document where it can be viewed on the front of a web page
-]).then (function(response){
-    console.log(response);
-    // const {name,id,email,github}=response; 
-    // engineer = new Engineer(name, id, email,github);
-    // const {name,id,email,school}=response;
-    // intern = new Intern(name, id, email,school);
-    // const {name,id,email,officeNumber}=response;
-    // manager = new Manager(name, id, email,officeNumber);
-inquirer.prompt([
-        {
+ //required documents that need to be linked to app.js
+ const Manager = require("./lib/Manager");
+ const Engineer = require("./lib/Engineer");
+ const Intern = require("./lib/Intern");
+ const inquirer = require("inquirer");
+ const path = require("path");
+ const fs = require("fs");
+ 
+ //empty array for the user input to go into
+ const employees = [];
+ 
+ // printing to html page
+ const OUTPUT_DIR = path.resolve(__dirname, "output");
+ const outputPath = path.join(OUTPUT_DIR, "team.html");
+ 
+ // this is how information is translated to the html renderer so that it can print onto the webpage
+ const render = require("./lib/htmlRenderer");
+ 
+ // Write code to use inquirer to gather information about the development team members, and to create objects for each team member (using the correct classes as blueprints!)
+ function userQuestions(role){
+     if(role === "Engineer"){
+         inquirer.prompt([
+             // each one of these is a different set of keypairs used to gather the information that the user puts in
+             {
+                 type: "input",
+                 message: "type in your name",
+                 name: "name"
+             },
+             {
+                 type: "input",
+                 message: "type in your id",
+                 name: "id"
+             },
+             {
+                 type: "input",
+                 message: "type in your email",
+                 name:"email"
+             },
+             {
+                 type: "input",
+                 message: "type in your github",
+                 name:"gitHub"
+             }
+         ]).then(response => {
+                 engineer = new Engineer(response.name, response.id, response.email, response.gitHub);
+                 employees.push(engineer);
+                 keepGoing();
+         })
+     } else if (role === "Intern"){
+         inquirer.prompt([
+             // each one of these is a different set of keypairs used to gather the information that the user puts in
+             {
+                 type: "input",
+                 message: "type in your name",
+                 name: "name"
+             },
+             {
+                 type: "input",
+                 message: "type in your id",
+                 name: "id"
+             },
+             {
+                 type: "input",
+                 message: "type in your email",
+                 name:"email"
+             },
+             {
+                 type: "input",
+                 message: "enter school name",
+                 name:"school"
+             }
+         ]).then(response => {
+                 intern = new Intern(response.name, response.id, response.email, response.school);
+                 employees.push(intern);
+                 keepGoing();
+         })
+     } else if (role === "Manager"){
+         inquirer.prompt([
+             // each one of these is a different set of keypairs used to gather the information that the user puts in
+             {
+                 type: "input",
+                 message: "type in your name",
+                 name: "name"
+             },
+             {
+                 type: "input",
+                 message: "type in your id",
+                 name: "id"
+             },
+             {
+                 type: "input",
+                 message: "type in your email",
+                 name:"email"
+             },
+             {
+                 type: "input",
+                 message: "type in your office number",
+                 name:"officeNumber"
+             }
+         ]).then(response => {
+                 manager = new Manager(response.name, response.id, response.email, response.officeNumber);
+                 employees.push(manager);
+                 keepGoing();
+         })
+     }
+ }
+ 
+ function initialPrompt(){
+     inquirer.prompt([
+         // each one of these is a different set of keypairs used to gather the information that the user puts in
+         {
+             type: "list",
+             message: "What is your role?",
+             choices: ["Engineer","Intern","Manager"],
+             name: "role"
+         }
+     ]).then(response => {
+        userQuestions(response.role);  
+     })
+ }
+function keepGoing(){
+    inquirer.prompt(
+        [
+            {
             type: "confirm",
-            message: "Do you want to continue?",
-            name: "keepGoing"
-        }
-    ]).then (function(response){
-        //returns the user back to the beginning of the questions
-        if(response.keepGoing === true){
-            rosterOutput();
-        } else {
-            //this is what happens when the user selects 'no'. the information is translated to 'employees' variable and then input into team.html
-            fs.writeFileSync(outputPath, render(employees), "utf8");
-        }
-    })
-})
+            message: "Do you want to add another employee?",
+            name: "continue"
+            }
+        ]).then(response => {
+            if (response.continue === true){
+                initialPrompt();
+            } else {
+                const finished = render(employees);
+                fs.writeFile(outputPath,finished, function(err,data){
+                    if(err){
+                        throw err;
+                    }
+                });
+            }
+        })
 }
-rosterOutput();
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-
-// render(employees);
-
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+ initialPrompt();
+ // After the user has input all employees desired, call the `render` function (required above) and pass in an array containing all employee objects; the `render` function will generate and return a block of HTML including templated divs for each employee! Use a .then promise here.
+ 
+ // After you have your html, you're now ready to create an HTML file using the HTML returned from the `render` function. Now write it to a file named `team.html` in the `output` folder. You can use the variable `outputPath` above target this location. Hint: you may need to check if the `output` folder exists and create it if it does not.
+ 
+ 
